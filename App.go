@@ -6,6 +6,7 @@ import (
 	"mvp-user-backend/routes"
 	"mvp-user-backend/logenv"
 	"mvp-user-backend/db"
+	"net/http"
 )
 
 func init() {
@@ -16,7 +17,8 @@ func init() {
 func main() {
 	session := db.Init()
 	log.Info(session)
-	routes.Init(session)
+	router := routes.Init(session)
+	http.ListenAndServe(":7200", router)
 	// broadcasting.Start()
 	// market.Start()
 }
