@@ -2,10 +2,10 @@ package main
 
 import (
 	log "github.com/sirupsen/logrus"
-	"planex/user-backend/db"
-	//"planex/user-backend/routes"
-	"planex/user-backend/logenv"
-	"planex/user-backend/config"
+	"mvp-user-backend/config"
+	"mvp-user-backend/routes"
+	"mvp-user-backend/logenv"
+	"mvp-user-backend/db"
 )
 
 func init() {
@@ -16,7 +16,7 @@ func init() {
 func main() {
 	session := db.Init()
 	log.Info(session)
-	//routes.Init(session)
+	routes.Init(session)
 	// broadcasting.Start()
 	// market.Start()
 }

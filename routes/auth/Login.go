@@ -5,8 +5,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
 	log "github.com/sirupsen/logrus"
-	"planex/user-backend/models"
-	"planex/user-backend/utils"
+	"mvp-user-backend/models"
+	"mvp-user-backend/utils"
 )
 
 

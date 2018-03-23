@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
-	"planex/user-backend/models"
-	"planex/user-backend/mail"
 	log "github.com/sirupsen/logrus"
+	"mvp-user-backend/models"
+	"mvp-user-backend/mail"
 )
 
 func Register(basicSession *mgo.Session) httprouter.Handle {

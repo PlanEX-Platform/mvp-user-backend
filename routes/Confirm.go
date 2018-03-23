@@ -2,11 +2,11 @@ package routes
 
 import (
 	"gopkg.in/mgo.v2"
-	"planex/user-backend/models"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"github.com/julienschmidt/httprouter"
-	"planex/user-backend/mail"
+	"mvp-user-backend/models"
+	"mvp-user-backend/mail"
 )
 
 func Confirm(basicSession *mgo.Session) httprouter.Handle {

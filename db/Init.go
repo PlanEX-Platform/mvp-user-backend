@@ -9,7 +9,12 @@ import (
 
 func Init() *mgo.Session {
 	url := viper.GetString("db.url")
+	name := viper.GetString("db.name")
+	user := viper.GetString("db.user")
+	pass := viper.GetString("db.pass")
 	session, err := mgo.Dial(url)
+	log.WithError(err).Debug(session)
+	err = session.DB(name).Login(user, pass)
 	log.WithError(err).Debug(session)
 	CreateIndexes(session)
 	return session

@@ -4,8 +4,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
 	log "github.com/sirupsen/logrus"
-	"planex/user-backend/utils"
 	"github.com/spf13/viper"
+	"mvp-user-backend/utils"
 )
 
 type Confirm struct {

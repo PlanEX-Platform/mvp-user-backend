@@ -3,12 +3,12 @@ package routes
 import (
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
-	"planex/user-backend/routes/auth"
 	"net/http"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/auth0/go-jwt-middleware"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"mvp-user-backend/routes/auth"
 )
 
 var jwtKey = viper.GetString("jwt.secret")
