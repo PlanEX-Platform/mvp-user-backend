@@ -18,26 +18,25 @@ var NotImplemeted = func(w http.ResponseWriter, r *http.Request, ps httprouter.P
 
 func Init(session *mgo.Session) *httprouter.Router {
 	router := httprouter.New()
-	router.POST("/register", auth.Register(session))
-	router.POST("/login", auth.Login(session))
+	router.POST("/api/register", auth.Register(session))
+	router.POST("/api/login", auth.Login(session))
 
 	// nonauth -----------------------------------------------------------------------------------------------------------
-	router.GET("/", NotImplemeted)
-	router.POST("/confirm", Confirm(session))
+	router.POST("/api/confirm", Confirm(session))
 
 	// auth --------------------------------------------------------------------------------------------------------------
 
 	// funds
-	router.POST("/balances", checkAuth(NotImplemeted))
-	router.POST("/deposit", checkAuth(NotImplemeted))
-	router.POST("/withdraw", checkAuth(NotImplemeted))
-	router.POST("/transfer/history", checkAuth(NotImplemeted))
+	router.POST("/api/balances", checkAuth(NotImplemeted))
+	router.POST("/api/deposit", checkAuth(NotImplemeted))
+	router.POST("/api/withdraw", checkAuth(NotImplemeted))
+	router.POST("/api/transfer/history", checkAuth(NotImplemeted))
 
 	// trade
-	router.POST("/trade/order/make", checkAuth(NotImplemeted))
-	router.POST("/trade/order/cancel", checkAuth(NotImplemeted))
-	router.POST("/trade/orders", checkAuth(NotImplemeted))
-	router.POST("/trade/history", checkAuth(NotImplemeted))
+	router.POST("/api/trade/order/make", checkAuth(NotImplemeted))
+	router.POST("/api/trade/order/cancel", checkAuth(NotImplemeted))
+	router.POST("/api/trade/orders", checkAuth(NotImplemeted))
+	router.POST("/api/trade/history", checkAuth(NotImplemeted))
 
 	return router
 }

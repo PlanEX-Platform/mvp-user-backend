@@ -18,6 +18,7 @@ func main() {
 	session := db.Init()
 	log.Info(session)
 	router := routes.Init(session)
+	log.Debug("Starting at 7200...")
 	http.ListenAndServe(":7200", router)
 	// broadcasting.Start()
 	// market.Start()
