@@ -9,8 +9,8 @@ import (
 )
 
 type User struct {
-	ID bson.ObjectId 	`json:"_id" bson:"_id"`
-	Email string 			`json:"email" bson:"email"`
+	Id bson.ObjectId 	`json:"_id" bson:"_id"`
+	Email string 		`json:"email" bson:"email"`
 	PassHash string 	`json:"pass_hash" bson:"pass_hash"`
 }
 
