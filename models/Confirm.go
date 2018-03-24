@@ -9,19 +9,21 @@ import (
 )
 
 type Confirm struct {
-	ID bson.ObjectId 	`json:"_id" bson:"_id"`
+	Id bson.ObjectId 	`json:"_id" bson:"_id"`
 	Email string 			`json:"email" bson:"email"`
 	Token string			`json:"token" bson:"token"`
 	Category string				`json:"category" bson:"category"`
 }
 
-var confirmCollectionName = viper.GetString("db.confirm_collection")
-
 func CreateConfirmation(email string, category string, session *mgo.Session) (bool, string) {
+	dbName := viper.GetString("db.name")
+	confirmCollectionName := viper.GetString("db.confirm_collection")
 	confirmations := session.DB(dbName).C(confirmCollectionName)
 	token := utils.GenConfirmationToken()
 	confirm := Confirm{
+		Id: bson.NewObjectId(),
 		Email: email,
+		Token: token,
 		Category: category }
 	err := confirmations.Insert(confirm)
 	log.WithError(err).Debugf("Trying to create confirmation instance: %v category: %v", email, category)
@@ -29,14 +31,20 @@ func CreateConfirmation(email string, category string, session *mgo.Session) (bo
 }
 
 func NeedConfirmation(email string, category string, session *mgo.Session) bool {
+	dbName := viper.GetString("db.name")
+	confirmCollectionName := viper.GetString("db.confirm_collection")
 	confirmations := session.DB(dbName).C(confirmCollectionName)
 	var confirm Confirm
 	err := confirmations.Find(bson.M{"email": email, "category": category}).One(&confirm)
-	log.WithError(err).Debug(confirm)
+	if err != nil {
+		log.WithError(err).Debug(confirm)
+	}
 	return err == nil
 }
 
 func RemoveConfirmation(token string, category string, session *mgo.Session) (bool, string) {
+	dbName := viper.GetString("db.name")
+	confirmCollectionName := viper.GetString("db.confirm_collection")
 	confirmations := session.DB(dbName).C(confirmCollectionName)
 	var confirm Confirm
 	confirmations.Find(bson.M{"token": token, "category": category}).One(&confirm)

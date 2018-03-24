@@ -17,16 +17,21 @@ func Login(basicSession *mgo.Session) httprouter.Handle {
 
 		// acquiring user input
 		r.ParseForm()
-		email := r.Form["email"][0]
-		password := r.Form["password"][0]
+		email := r.FormValue("email")
+		password := r.FormValue("password")
 
 		// TODO: validate inputs
 
 		log.Debug("Trying to login: " + email)
 
+		if email == "" || password == "" {
+			w.Write([]byte(`{ "status": "fail" }`))
+			return
+		}
+
 		// checking credentials and sending answer
 		if models.NeedConfirmation(email, "register", session) {
-			w.Write([]byte("{ status: \"confirmation\" }"))
+			w.Write([]byte(`{ "status": "confirmation" }`))
 			log.Debug("Need confirmation: " + email)
 			return
 		} else {
@@ -34,16 +39,22 @@ func Login(basicSession *mgo.Session) httprouter.Handle {
 			if err == nil {
 				if utils.CompareHashAndPass(user.PassHash, password) {
 					token, exp := utils.GenJWT(user.Id.String())
-					cookie := http.Cookie{Name: "Bearer", Value: token, Expires: exp}
-					http.SetCookie(w, &cookie)
-					w.Write([]byte("{ status: \"logged\" }"))
+					log.Debugf("token: %v exp: %v", token, exp)
+					// cookie := http.Cookie{
+					// 	Name: "Bearer",
+					// 	Value: token,
+					// 	Expires: exp,
+					// 	HttpOnly: true}
+					// log.Debugf("Login cookie: %v", cookie)
+					// http.SetCookie(w, &cookie)
+					w.Write([]byte(`{ "status": "logged", "token": "` + token + `" }`))
 					log.Debug("Success login: " + email)
 					return
 				}
 			}
 		}
 
-		w.Write([]byte("{ status: \"fail\" }"))
+		w.Write([]byte(`{ "status": "fail" }`))
 		log.Debug("Wrong password for: " + email)
 	}
 }

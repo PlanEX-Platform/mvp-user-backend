@@ -9,10 +9,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var jwtKey = viper.GetString("jwt.secret")
-var expDelta = viper.GetInt64("jwt.expiration_delta")
-
 func GenJWT(id string) (string, time.Time) {
+	jwtKey := viper.GetString("jwt.secret")
+	expDelta := viper.GetInt64("jwt.expiration_delta")
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	expiration := time.Now().Add(time.Hour * time.Duration(expDelta))
@@ -21,7 +20,7 @@ func GenJWT(id string) (string, time.Time) {
 		"iat": time.Now().Unix(),
 		"id":  id }
 
-	tokenString, err := token.SignedString(jwtKey)
+	tokenString, err := token.SignedString([]byte(jwtKey))
 	log.WithError(err).Debug("JWT token generated: " + tokenString)
 
 	return tokenString, expiration

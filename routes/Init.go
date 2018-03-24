@@ -4,6 +4,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
 	"net/http"
+	"strings"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/auth0/go-jwt-middleware"
 	log "github.com/sirupsen/logrus"
@@ -22,6 +23,7 @@ func Init(session *mgo.Session) *httprouter.Router {
 	router.POST("/api/login", auth.Login(session))
 
 	// nonauth -----------------------------------------------------------------------------------------------------------
+	serveStatic(router)
 	router.POST("/api/confirm", Confirm(session))
 
 	// auth --------------------------------------------------------------------------------------------------------------
@@ -57,4 +59,22 @@ func checkAuth(handleFunc httprouter.Handle) httprouter.Handle {
 			log.WithError(err).Debug("JWT authorization failed")
 		}
 	}
+}
+
+func serveStatic(router *httprouter.Router) {
+	fileServer := http.FileServer(http.Dir("/go/src/mvp-user-backend/static"))
+	router.GET("/", func(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+		log.Debugf("url: %v", req.URL.Path)
+		req.URL.Path = ""
+		fileServer.ServeHTTP(w, req)
+	})
+	router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		log.Debugf("url: %v", req.URL.Path)
+		if !strings.HasPrefix(req.URL.Path, "/static") {
+			if !strings.ContainsAny(req.URL.Path, ".") {
+				req.URL.Path = ""
+			}
+		}
+		fileServer.ServeHTTP(w, req)
+	})
 }

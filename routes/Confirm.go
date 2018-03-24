@@ -16,17 +16,22 @@ func Confirm(basicSession *mgo.Session) httprouter.Handle {
 
 		// acquiring confirmation token
 		r.ParseForm()
-		token := r.Form["token"][0]
-		category := r.Form["cat"][0]
+		token := r.FormValue("token")
+		category := r.FormValue("cat")
 
 		// TODO: validate inputs
 
+		if token == "" || category == "" {
+			w.Write([]byte(`{ "status": "fail" }`))
+			return
+		}
+
 		// trying to confirm and sending answer
 		if confirmByToken(token, category, session) {
-			w.Write([]byte("{ status: \"confirmed\" }"))
+			w.Write([]byte(`{ "status": "confirmed" }`))
 			log.Debugf("Successfully confirmed %v by %v", category, token)
 		} else {
-			w.Write([]byte("{ status: \"fail\" }"))
+			w.Write([]byte(`{ "status": "fail" }`))
 			log.Debugf("Failed confirmation %v by %v", category, token)
 		}
 	}

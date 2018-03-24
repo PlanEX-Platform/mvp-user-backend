@@ -24,6 +24,7 @@ func Init() *mgo.Session {
 	log.WithError(err).Debug(session)
 	err = session.DB(name).Login(user, pass)
 	log.WithError(err).Debug(session)
+	session.SetMode(mgo.Monotonic, true)
 	CreateIndexes(session)
 	return session
 }

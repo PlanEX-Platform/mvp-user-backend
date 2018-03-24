@@ -9,17 +9,17 @@ import (
 )
 
 type User struct {
-	Id bson.ObjectId 	`json:"_id" bson:"_id"`
-	Email string 		`json:"email" bson:"email"`
+	Id bson.ObjectId `bson:"_id" json:"id"`
+	Email	string 			`json:"email" bson:"email"`
 	PassHash string 	`json:"pass_hash" bson:"pass_hash"`
 }
 
-var dbName = viper.GetString("db.name")
-var userCollectionName = viper.GetString("db.user_collection")
-
 func CreateUser(email string, pass string, session *mgo.Session) bool {
+	dbName := viper.GetString("db.name")
+	userCollectionName := viper.GetString("db.user_collection")
 	users := session.DB(dbName).C(userCollectionName)
-	user := User{
+	user := &User{
+		Id: bson.NewObjectId(),
 		Email: email,
 		PassHash: hashAndSalt(pass) }
 	err := users.Insert(user)
@@ -31,6 +31,8 @@ func CreateUser(email string, pass string, session *mgo.Session) bool {
 }
 
 func UserByEmail(email string, session *mgo.Session) (User, error) {
+	dbName := viper.GetString("db.name")
+	userCollectionName := viper.GetString("db.user_collection")
 	users := session.DB(dbName).C(userCollectionName)
 	var user User
 	err := users.Find(bson.M{"email": email}).One(&user)
