@@ -38,7 +38,7 @@ func Login(basicSession *mgo.Session) httprouter.Handle {
 			user, err := models.UserByEmail(email, session)
 			if err == nil {
 				if utils.CompareHashAndPass(user.PassHash, password) {
-					token, exp := utils.GenJWT(user.Id.String())
+					token, exp := utils.GenJWT(user.Id.Hex())
 					log.Debugf("token: %v exp: %v", token, exp)
 					// cookie := http.Cookie{
 					// 	Name: "Bearer",

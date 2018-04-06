@@ -10,9 +10,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"mvp-user-backend/routes/auth"
+	"mvp-user-backend/routes/funds"
 )
 
-var jwtKey = viper.GetString("jwt.secret")
 var NotImplemeted = func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Write([]byte("{ error: \"Not implemented\" }"))
 }
@@ -30,7 +30,7 @@ func Init(session *mgo.Session) *httprouter.Router {
 
 	// funds
 	router.POST("/api/balances", checkAuth(NotImplemeted))
-	router.POST("/api/deposit", checkAuth(NotImplemeted))
+	router.POST("/api/deposit", checkAuth(funds.Deposit))
 	router.POST("/api/withdraw", checkAuth(NotImplemeted))
 	router.POST("/api/transfer/history", checkAuth(NotImplemeted))
 
@@ -44,9 +44,10 @@ func Init(session *mgo.Session) *httprouter.Router {
 }
 
 func checkAuth(handleFunc httprouter.Handle) httprouter.Handle {
+	var jwtKey = viper.GetString("jwt.secret")
 	m := jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return jwtKey, nil
+			return []byte(jwtKey), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 	})
